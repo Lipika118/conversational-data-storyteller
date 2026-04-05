@@ -2,38 +2,34 @@ import plotly.express as px
 import pandas as pd
 
 def auto_visualize(df, question):
-    # Only visualize if exactly 2 columns
-    if df.shape[1] != 2:
-        return None
-    
-    col1 = df.columns[0]  # labels
-    col2 = df.columns[1]  # numbers
-
-    # Check second column is numeric
-    if not pd.api.types.is_numeric_dtype(df[col2]):
+    if df.empty:
         return None
 
-    fig = px.bar(
-        df,
-        x=col1,
-        y=col2,
-        title=question,
-        color_discrete_sequence=["#37DD98"]
-    )
-    fig.update_layout(
-        plot_bgcolor="white",
-        paper_bgcolor="white",
-    )
+    # Get numeric and non-numeric columns
+    numeric_cols = df.select_dtypes(include='number').columns.tolist()
+    non_numeric_cols = df.select_dtypes(exclude='number').columns.tolist()
+
+    if not numeric_cols:
+        return None
+
+    # Determine x axis
+    if non_numeric_cols:
+        x_col = non_numeric_cols[0]
+    else:
+        x_col = df.columns[0]
+
+    y_col = numeric_cols[0]
+
+    # Choose chart type based on x column type
+    if pd.api.types.is_datetime64_any_dtype(df[x_col]):
+        fig = px.line(df, x=x_col, y=y_col, title=question,
+                      color_discrete_sequence=["#E91E8C"])
+    elif df.shape[0] <= 20 and df.shape[1] == 2:
+        fig = px.bar(df, x=x_col, y=y_col, title=question,
+                     color_discrete_sequence=["#37DD98"])
+    else:
+        fig = px.line(df, x=x_col, y=y_col, title=question,
+                      color_discrete_sequence=["#E91E8C"])
+
+    fig.update_layout(plot_bgcolor="white", paper_bgcolor="white")
     return fig
-
-# Test it
-if __name__ == "__main__":
-    # Sample data to test
-    test_df = pd.DataFrame({
-        "customer_city": ["sao paulo", "rio de janeiro", "belo horizonte", "brasilia", "curitiba"],
-        "total_orders": [15540, 6882, 2773, 2131, 1521]
-    })
-    
-    fig = auto_visualize(test_df, "Top 5 cities by number of orders")
-    if fig:
-        fig.show()  # opens in browser
