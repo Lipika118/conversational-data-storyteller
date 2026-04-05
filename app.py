@@ -22,7 +22,7 @@ groq_client   = Groq(api_key=GROQ_KEY)
 
 # Database connection
 engine = create_engine(
-    f"postgresql+psycopg2://postgres:{DB_PASS}@localhost/postgres"
+    os.environ.get("DATABASE_URL")
 )
 
 SCHEMA = """
