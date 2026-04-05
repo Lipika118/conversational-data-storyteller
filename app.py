@@ -71,18 +71,26 @@ Mention actual numbers.
 """)
 
 def auto_visualize(df, question):
-    if df.shape[1] != 2:
+    if df.empty:
         return None
-    col1, col2 = df.columns[0], df.columns[1]
-    if not pd.api.types.is_numeric_dtype(df[col2]):
+
+    numeric_cols = df.select_dtypes(include='number').columns.tolist()
+    non_numeric_cols = df.select_dtypes(exclude='number').columns.tolist()
+
+    if not numeric_cols:
         return None
+
+    x_col = non_numeric_cols[0] if non_numeric_cols else df.columns[0]
+    y_col = numeric_cols[0]
+
     time_words = ["month", "year", "date", "trend", "time", "daily", "weekly"]
-    if any(w in question.lower() for w in time_words):
-        fig = px.line(df, x=col1, y=col2, title=question,
+    if any(w in question.lower() for w in time_words) or pd.api.types.is_datetime64_any_dtype(df[x_col]):
+        fig = px.line(df, x=x_col, y=y_col, title=question,
                       color_discrete_sequence=["#D237DD"])
     else:
-        fig = px.bar(df, x=col1, y=col2, title=question,
+        fig = px.bar(df, x=x_col, y=y_col, title=question,
                      color_discrete_sequence=["#DD37D8"])
+
     fig.update_layout(plot_bgcolor="white", paper_bgcolor="white")
     return fig
 
