@@ -17,7 +17,7 @@ GROQ_KEY   = os.getenv("GROQ_API_KEY")
 DB_PASS    = os.getenv("DB_PASSWORD")
 
 # API connections
-gemini_client = genai.Client(api_key=GEMINI_KEY)
+gemini_client = genai.GenerativeModel('gemini-pro')
 groq_client   = Groq(api_key=GROQ_KEY)
 
 # Database connection
