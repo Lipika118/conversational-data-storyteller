@@ -74,7 +74,7 @@ streamlit run app.py
 
 ## Live demo
 
-[Click here to try the app](your_streamlit_url_here)
+[Click here to try the app](https://conversational-data-storyteller-i58pge8zjq7lv3jnnvzkbh.streamlit.app/)
 
 ## Author
 
