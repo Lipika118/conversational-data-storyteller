@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from google import genai
+import google.generativeai as genai
 from groq import Groq
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
@@ -79,10 +79,10 @@ def auto_visualize(df, question):
     time_words = ["month", "year", "date", "trend", "time", "daily", "weekly"]
     if any(w in question.lower() for w in time_words):
         fig = px.line(df, x=col1, y=col2, title=question,
-                      color_discrete_sequence=["#378ADD"])
+                      color_discrete_sequence=["#D237DD"])
     else:
         fig = px.bar(df, x=col1, y=col2, title=question,
-                     color_discrete_sequence=["#378ADD"])
+                     color_discrete_sequence=["#DD37D8"])
     fig.update_layout(plot_bgcolor="white", paper_bgcolor="white")
     return fig
 
