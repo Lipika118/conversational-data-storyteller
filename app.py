@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from google import genai
+import google.generativeai as genai
 from groq import Groq
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
@@ -17,12 +17,12 @@ GROQ_KEY   = os.getenv("GROQ_API_KEY")
 DB_PASS    = os.getenv("DB_PASSWORD")
 
 # API connections
-gemini_client = genai.Client(api_key=GEMINI_KEY)
+gemini_client = genai.GenerativeModel('gemini-pro')
 groq_client   = Groq(api_key=GROQ_KEY)
 
 # Database connection
 engine = create_engine(
-    f"postgresql+psycopg2://postgres:{DB_PASS}@localhost/postgres"
+    os.environ.get("DATABASE_URL")
 )
 
 SCHEMA = """
@@ -79,10 +79,10 @@ def auto_visualize(df, question):
     time_words = ["month", "year", "date", "trend", "time", "daily", "weekly"]
     if any(w in question.lower() for w in time_words):
         fig = px.line(df, x=col1, y=col2, title=question,
-                      color_discrete_sequence=["#378ADD"])
+                      color_discrete_sequence=["#D237DD"])
     else:
         fig = px.bar(df, x=col1, y=col2, title=question,
-                     color_discrete_sequence=["#378ADD"])
+                     color_discrete_sequence=["#DD37D8"])
     fig.update_layout(plot_bgcolor="white", paper_bgcolor="white")
     return fig
 
